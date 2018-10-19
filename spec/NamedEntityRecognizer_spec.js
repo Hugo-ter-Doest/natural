@@ -17,16 +17,14 @@ var sample = fs.readFileSync("./spec/test_data/Guardian_sample.txt", "utf-8");
 
 var recognizer = new Recognizer("english");
 testSentences.forEach(function(sentence) {
-  var edges = [];
-  recognizer.recognize(sentence, edges)
+  var edges = recognizer.recognize(sentence)
   console.log(edges);
 });
 
 
 var GuardianSentences = sample.split('\n');
 GuardianSentences.forEach(function(sentence) {
-  var edges = [];
-  recognizer.recognize(sentence, edges)
+  var edges = recognizer.recognize(sentence)
   console.log(edges);
 });
 
