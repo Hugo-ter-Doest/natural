@@ -1,0 +1,25 @@
+S -> NP
+S -> PP
+
+PP -> PREP NP
+
+NP -> N
+NP -> DET N
+NP -> DET ADJ N
+NP -> N N
+
+NP -> time
+NP -> date
+NP -> uri
+NP -> email
+NP -> currency
+NP -> zipcode
+
+NP -> number
+NP -> number N
+
+NP -> country
+NP -> firstName
+NP -> lastName
+NP -> firstName lastName
+NP -> stateUSA
