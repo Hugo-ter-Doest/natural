@@ -15,7 +15,7 @@ var testSentences = ["this is an email address hz@hotmail.com",
 
 var sample = fs.readFileSync("./spec/test_data/Guardian_sample.txt", "utf-8");
 
-var recognizer = new Recognizer("english");
+var recognizer = new Recognizer("EN");
 testSentences.forEach(function(sentence) {
   var edges = recognizer.recognize(sentence)
   console.log(edges);
