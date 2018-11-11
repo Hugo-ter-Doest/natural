@@ -1,12 +1,12 @@
 S -> NP
 S -> PP
 
-PP -> PREP NP
+PP -> IN NP
 
-NP -> N
-NP -> DET N
-NP -> DET ADJ N
-NP -> N N
+NP -> NN
+NP -> DET NN
+NP -> DET ADJ NN
+NP -> NN NN
 
 NP -> time
 NP -> date
@@ -16,7 +16,7 @@ NP -> currency
 NP -> zipcode
 
 NP -> number
-NP -> number N
+NP -> number NN
 
 NP -> country
 NP -> firstName
