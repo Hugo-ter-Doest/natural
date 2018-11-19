@@ -18,6 +18,7 @@
 
 var fs = require('fs');
 
+var Sentence = require('../lib/natural/brill_pos_tagger/lib/Sentence');
 var GrammarParser = require('../lib/natural/parsers/GrammarParser');
 var Parser = require('../lib/natural/parsers/CYKParser');
 var Item = require('../lib/natural/parsers/CYKItem');
@@ -68,24 +69,26 @@ describe('CYK Parser', function() {
   });
 
   it('should parse a sentence', function() {
-    var tagged_sentence = [['I', 'NP'],
-                           ['saw', 'V'],
-                           ['the', 'DET'],
-                           ['man', 'N'],
-                           ['with', 'P'],
-                           ['the', 'DET'],
-                           ['telescope', 'N']];
-    var N = tagged_sentence.length;
+    var taggedSentence = new Sentence();
+    taggedSentence.addTaggedWord('I', 'NP');
+    taggedSentence.addTaggedWord('saw', 'V');
+    taggedSentence.addTaggedWord('the', 'DET');
+    taggedSentence.addTaggedWord('man', 'N');
+    taggedSentence.addTaggedWord('with', 'P');
+    taggedSentence.addTaggedWord('the', 'DET');
+    taggedSentence.addTaggedWord('telescope', 'N');
+
+    var N = taggedSentence.length;
     var parser = new Parser(grammar);
-    var chart = parser.parse(tagged_sentence);
+    var chart = parser.parse(taggedSentence);
     var parses = chart.fullParseItems(parser.grammar.getStartSymbol(), "cykitem");
     expect(parses.length).toEqual(2);
-    var expected_item = new Item({
+    var expectedItem = new Item({
       rule: {'lhs': 'S', 'rhs': ['NP', 'VP']},
       from: 0,
       to: 7
     });
-    expect(parses[0].id, expected_item.id).toEqual(expected_item.id);
-    expect(parses[1].id, expected_item.id).toEqual(expected_item.id);
+    expect(parses[0].id, expectedItem.id).toEqual(expectedItem.id);
+    expect(parses[1].id, expectedItem.id).toEqual(expectedItem.id);
   });
 });
