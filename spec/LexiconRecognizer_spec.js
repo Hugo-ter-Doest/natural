@@ -20,13 +20,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+const DEBUG = true;
+
+var Sentence = require('../lib/natural/brill_pos_tagger/lib/Sentence');
 var Recognizer = require('../lib/natural/NER/LexiconRecognizer');
 
 var recognizer = new Recognizer("EN");
 
-var testSentences = [];
+var testCases = [
+  {
+    sentence: "Belgium",
+    tag: "country",
+    position: "0"
+  },
+  {
+    sentence: "Janet",
+    tag: "firstName",
+    position: "0"
+  },
+  {
+    sentence: "Coleman",
+    tag: "lastName",
+    position: "0"
+  },
+  {
+    sentence: "Oregon",
+    tag: "stateUSA",
+    position: "0"
+  }
 
-testSentences.forEach(sentence => {
-  var tokenizedSentence = sentence.split(/[ \t\r\n]+/);
+];
 
+describe("LexiconRecognizer", function() {
+  it("should recognize entities as defined in the lexicons", function() {
+    testCases.forEach(testCase => {
+      var tokenizedSentence = testCase.sentence.split(/[ \t\r\n]+/);
+      var taggedSentence = new Sentence();
+      tokenizedSentence.forEach(token => {
+        taggedSentence.addTaggedWord(token, null);
+      });
+      taggedSentence = recognizer.recognize(taggedSentence);
+      DEBUG && console.log(taggedSentence);
+      expect(taggedSentence.taggedWords[testCase.position].tag).toEqual(testCase.tag);
+    });
+  });
 });
