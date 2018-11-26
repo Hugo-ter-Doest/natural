@@ -1,4 +1,5 @@
 /*
+Unit test for LexiconRecognizer
 Copyright (c) 2018, Hugo W.L. ter Doest
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,45 +24,63 @@ THE SOFTWARE.
 const DEBUG = true;
 
 var Sentence = require('../lib/natural/brill_pos_tagger/lib/Sentence');
+var TaggedString = require('../lib/natural/NER/TaggedString');
 var Recognizer = require('../lib/natural/NER/LexiconRecognizer');
 
 var recognizer = new Recognizer("EN");
 
 var testCases = [
   {
-    sentence: "Belgium",
+    sentence: "word1 word2 Belgium word3 word4",
     tag: "country",
-    position: "0"
+    tokenIndex: "2",
+    stringStart: "12",
+    stringEnd: "19"
   },
   {
-    sentence: "Janet",
+    sentence: "word1 word2 Janet word3 word4",
     tag: "firstName",
-    position: "0"
+    tokenIndex: "2",
+    stringStart: "12",
+    stringEnd: "19"
   },
   {
-    sentence: "Coleman",
+    sentence: "word1 word2 Coleman word3 word4",
     tag: "lastName",
-    position: "0"
+    tokenIndex: "2",
+    stringStart: "12",
+    stringEnd: "19"
   },
   {
-    sentence: "Oregon",
+    sentence: "word1 word2 Oregon word3 word4",
     tag: "stateUSA",
-    position: "0"
+    tokenIndex: "2",
+    stringStart: "12",
+    stringEnd: "19"
   }
-
 ];
 
 describe("LexiconRecognizer", function() {
-  it("should recognize entities as defined in the lexicons", function() {
+  it("should recognize entities in tokenized sentences as defined in the lexicons", function() {
     testCases.forEach(testCase => {
       var tokenizedSentence = testCase.sentence.split(/[ \t\r\n]+/);
       var taggedSentence = new Sentence();
       tokenizedSentence.forEach(token => {
         taggedSentence.addTaggedWord(token, null);
       });
-      taggedSentence = recognizer.recognize(taggedSentence);
+      taggedSentence = recognizer.recognizeInTokenized(taggedSentence);
       DEBUG && console.log(taggedSentence);
-      expect(taggedSentence.taggedWords[testCase.position].tag).toEqual(testCase.tag);
+      expect(taggedSentence.taggedWords[testCase.tokenIndex].tag).toEqual(testCase.tag);
+    });
+  });
+
+  it("should recognize entities in strings as defined in the lexicons", function() {
+    testCases.forEach(testCase => {
+      var taggedString = new TaggedString(testCase.sentence);
+      taggedString = recognizer.recognizeInString(taggedString);
+      DEBUG && console.log("taggedString: " + JSON.stringify(taggedString));
+      var edges = taggedString.getEdgesFrom(testCase.stringStart);
+      expect(edges.length).toEqual(1);
     });
   });
 });
