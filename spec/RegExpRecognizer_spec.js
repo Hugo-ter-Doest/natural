@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Sentence = require('../lib/natural/brill_pos_tagger/lib/Sentence');
 var Recognizer = require('../lib/natural/ner/RegExpRecognizer');
 
 var testSentences = ["xxxxxx at hz@hotmail.com yyyyyyy",
@@ -29,22 +28,54 @@ var testSentences = ["xxxxxx at hz@hotmail.com yyyyyyy",
                      "9:10",
                      "a date that should be tagged 31/2/2018",
                      "zipcode in context 7559AH is",
-                     "https://kennisbank.dimpact.nl/jira",
-                     "https://kennisbank.dimpact.nl/jira bla bla Oregon",
+                     "Here is a URI https://kennisbank.dimpact.nl/jira Oregon",
                      "asnfhf f sdf €12,59 d sf $12,59",
                      "2,5"
      ];
 
-var recognizer = new Recognizer("EN");
-testSentences.forEach(function(sentence) {
-  // Create tagged sentence
-  var taggedSentence = new Sentence();
-  var words = sentence.split(/\s+/);
-  words.forEach(word => {
-    taggedSentence.addTaggedWord(word, null);
-  });
+var expectedResults = [
+  [ { start: 10,
+    end: 24,
+    cat: 'email',
+    length: 14,
+    string: 'hz@hotmail.com' } ],
 
-  // Recognize
-  var taggedSentence = recognizer.recognize(taggedSentence);
-  console.log(taggedSentence);
+  [ { start: 14,
+    end: 31,
+    cat: 'email',
+    length: 17,
+    string: 'hwl@terdoest.info' } ],
+
+  [ { start: 18, end: 23, cat: 'time', length: 5, string: '19:20' } ],
+
+  [ { start: 0, end: 4, cat: 'time', length: 4, string: '9:10' } ],
+
+  [ { start: 29, end: 38, cat: 'date', length: 9, string: '31/2/2018' } ],
+
+  [ { start: 19, end: 23, cat: 'number', length: 4, string: '7559' } ],
+
+  [ { start: 14,
+    end: 48,
+    cat: 'uri',
+    length: 34,
+    string: 'https://kennisbank.dimpact.nl/jira' } ],
+
+  [ { start: 13, end: 19, cat: 'amount', length: 6, string: '€12,59' },
+    { start: 25, end: 31, cat: 'amount', length: 6, string: '$12,59' } ],
+
+  [ { start: 0, end: 1, cat: 'number', length: 1, string: '2' },
+    { start: 2, end: 3, cat: 'number', length: 1, string: '5' } ]
+
+];
+
+describe("NER based on regular expressions", () => {
+  var recognizer = new Recognizer("EN");
+  testSentences.forEach(function(sentence, i) {
+    // Recognize
+    it("should recognize entities as expected", () => {
+      var matches = recognizer.recognize(sentence);
+      console.log(matches);
+      expect(matches).toEqual(expectedResults[i]);
+    });
+  })
 });
